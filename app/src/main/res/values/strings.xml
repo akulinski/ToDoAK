@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ToDoAK</string>
+    <string name="note_image">Note image</string>
+    <string name="EditString">Edit</string>
 </resources>

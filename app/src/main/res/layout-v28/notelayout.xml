@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textAlignment="textStart">
+
+    <ImageView
+        android:layout_marginTop="10dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal|top"
+        android:baselineAlignBottom="true"
+        android:contentDescription="@string/note_image"
+        android:src="@drawable/note_img"
+        android:visibility="visible"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:padding="5dp"
+        android:orientation="vertical"
+        android:textAlignment="inherit">
+
+        <EditText
+            android:id="@+id/note_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. "
+            android:textAlignment="inherit"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:inputType="textMultiLine"
+            android:focusableInTouchMode="false"
+            />
+        <Button
+            android:id="@+id/button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/EditString"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_gravity="end"/>
+
+    </LinearLayout>
+</LinearLayout>
