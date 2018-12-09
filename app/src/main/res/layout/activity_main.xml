@@ -7,12 +7,39 @@
     android:background="@color/white"
     >
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/not_done"
+        android:text="@string/not_done"
+        android:layout_toStartOf="@+id/done"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/done"
+        android:text="@string/done"
+        android:layout_toStartOf="@+id/filter"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"/>
+
+    <ImageButton
+        android:paddingTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/filter"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/filter_img"
+        android:background="@drawable/fliter_button_style"
+        />
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/notes_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/recycler_view_item" />
+        tools:listitem="@layout/recycler_view_item"
+        android:layout_below="@+id/filter"/>
 
 
 </RelativeLayout>

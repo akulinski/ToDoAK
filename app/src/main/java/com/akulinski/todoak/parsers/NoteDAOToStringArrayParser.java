@@ -1,32 +1,28 @@
 package com.akulinski.todoak.parsers;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public final class NoteDAOToStringArrayParser implements IParser {
 
-    private LinkedList<NoteDAO> noteDAOLinkedList;
+    private ArrayList<NoteDAO> noteDAOArrayList;
 
-    private String[] result;
 
     public NoteDAOToStringArrayParser(){
-        this.noteDAOLinkedList = new LinkedList<>();
+        this.noteDAOArrayList = new ArrayList<>();
     }
 
     @Override
     public void loadData(Object data) {
-        this.noteDAOLinkedList = (LinkedList<NoteDAO>) data;
-        this.result = new String[this.noteDAOLinkedList.size()];
+        this.noteDAOArrayList = (ArrayList<NoteDAO>) data;
     }
 
     @Override
     public void parse() {
-        for(int i=0; i<this.noteDAOLinkedList.size();i++){
-            result[i]=this.noteDAOLinkedList.get(i).getTitle();
-        }
+
     }
 
     @Override
     public Object getResult() {
-        return result;
+        return this.noteDAOArrayList;
     }
 }

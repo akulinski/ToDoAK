@@ -36,17 +36,37 @@
             />
 
         <Button
-            android:id="@+id/task_delete"
+            android:id="@+id/change_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="Done"
+            android:text="@string/finish"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="5dp"
-            style="@style/Widget.AppCompat.Button.Colored"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_below="@+id/note_text"
             android:background="@drawable/button_shape"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+
+        <Button
+            android:id="@+id/change_status_not_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/undo"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_below="@+id/note_text"
+            android:background="@drawable/button_shape"
+            android:textColor="@color/white"
+            android:clickable="false"
+            android:focusable="false"
+            />
 
 
 </RelativeLayout>

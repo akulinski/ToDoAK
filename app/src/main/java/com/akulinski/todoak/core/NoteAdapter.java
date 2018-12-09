@@ -7,13 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.akulinski.todoak.R;
+import com.akulinski.todoak.parsers.NoteDAO;
+import com.google.common.eventbus.EventBus;
+
+import java.util.ArrayList;
 
 public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
 
-    private String[] listOfItems;
+    private ArrayList<NoteDAO> listOfItems;
+    private EventBus eventBus;
 
-    public NoteAdapter(String[] listOfItems) {
+    public NoteAdapter(ArrayList<NoteDAO> listOfItems, EventBus eventBus) {
         this.listOfItems = listOfItems;
+        this.eventBus = eventBus;
     }
 
     @NonNull
@@ -21,16 +27,27 @@ public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
     public NoteHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Boolean attachViewImmediatelyToParent = false;
         View singleItemLayout = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.notelayout,viewGroup,attachViewImmediatelyToParent);
-        return new NoteHolder(singleItemLayout);
+        return new NoteHolder(singleItemLayout, eventBus, singleItemLayout.getContext());
     }
 
     @Override
     public void onBindViewHolder(@NonNull NoteHolder noteHolder, int i) {
-        noteHolder.getTextToShow().setText(listOfItems[i]);
+        noteHolder.getTextToShow().setText(listOfItems.get(i).getTitle());
+        noteHolder.setNoteDAO(listOfItems.get(i));
+
     }
 
     @Override
     public int getItemCount() {
-        return listOfItems.length;
+        return listOfItems.size();
     }
+
+    public ArrayList<NoteDAO> getListOfItems() {
+        return listOfItems;
+    }
+
+    public void setListOfItems(ArrayList<NoteDAO> listOfItems) {
+        this.listOfItems = listOfItems;
+    }
+
 }

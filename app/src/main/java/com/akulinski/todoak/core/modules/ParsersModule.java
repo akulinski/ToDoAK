@@ -3,7 +3,6 @@ package com.akulinski.todoak.core.modules;
 import com.akulinski.todoak.core.dbmanagment.CRUDOperationManager;
 import com.akulinski.todoak.parsers.IParser;
 import com.akulinski.todoak.parsers.JsonArrayToDb;
-import com.akulinski.todoak.parsers.NoteDAO;
 import com.akulinski.todoak.parsers.NoteDAOToStringArrayParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

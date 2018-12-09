@@ -28,7 +28,6 @@ public class NotesDbManager extends SQLiteOpenHelper {
     @Inject
     public NotesDbManager(Context context) {
         super(context, DATABASE_NAME, null,DATABASE_VERSION);
-        onCreate(this.getWritableDatabase());
     }
 
     @Override
