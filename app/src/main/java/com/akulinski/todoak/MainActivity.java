@@ -5,13 +5,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.akulinski.todoak.core.NoteAdapter;
 import com.akulinski.todoak.core.application.ToDoCore;
+import com.akulinski.todoak.core.dbmanagment.CRUDOperationManager;
 import com.akulinski.todoak.events.GetNotesEvent;
-import com.akulinski.todoak.parsers.IParser;
 import com.akulinski.todoak.parsers.JsonArrayToDb;
+import com.akulinski.todoak.parsers.NoteDAO;
+import com.akulinski.todoak.parsers.NoteDAOToStringArrayParser;
 import com.akulinski.todoak.retorift.ApiInterface;
 import com.akulinski.todoak.retorift.callbacks.GetNotesCallback;
 import com.google.common.eventbus.EventBus;
@@ -26,13 +27,7 @@ import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Defining dummy data to be shown
-    private String[] listOfItem = {"Be yourself; everyone else is already taken.",
-            "No one can make you feel inferior without your consent.",
-            "Always forgive your enemies; nothing annoys them so much.",
-            "It is during our darkest moments that we must focus to see the light.",
-            "Don't judge each day by the harvest you reap but by the seeds that you plant.",
-            "The pessimist complains about the wind; the optimist expects it to change; the realist adjusts the sails."};
+    private String[] listOfItems ;
 
     private EventBus eventBus;
 
@@ -40,9 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
     private GetNotesCallback getPhotosCallback;
 
-    private RecyclerView quotesRecyclerView;
+    private RecyclerView notesRecyclerView;
 
     private JsonArrayToDb jsonArrayToDb;
+
+    private CRUDOperationManager<NoteDAO> crudOperationManager;
+
+    private NoteDAOToStringArrayParser noteDAOToStringArrayParser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,23 +52,35 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        quotesRecyclerView = (RecyclerView) findViewById(R.id.rv_show_list);
-        //Instantiating LinearLayoutManager and MyListAdapter
-        NoteAdapter quotesListAdapter = new NoteAdapter(listOfItem);
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        //Hooking up to RecyclerView
-        quotesRecyclerView.setLayoutManager(manager);
-        quotesRecyclerView.setAdapter(quotesListAdapter);
+        if(!crudOperationManager.checkIfTableIsNotEmpty()) {
+            Call<JsonArray> call = apiService.getNotes();
+            call.enqueue(getPhotosCallback);
+        }else{
+            try {
+                noteDAOToStringArrayParser.loadData(crudOperationManager.readAllFromDb());
+                noteDAOToStringArrayParser.parse();
+                listOfItems = (String[]) noteDAOToStringArrayParser.getResult();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
         subscribeToEventBus();
-
-        Call<JsonArray> call = apiService.getNotes();
-        call.enqueue(getPhotosCallback);
     }
 
+    private void createRecyclerView(){
+
+        notesRecyclerView = (RecyclerView) findViewById(R.id.notes_list);
+
+        NoteAdapter quotesListAdapter = new NoteAdapter(listOfItems);
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        notesRecyclerView.setLayoutManager(manager);
+        notesRecyclerView.setAdapter(quotesListAdapter);
+    }
 
     /**
-     * Registering LoginActivity class to the EventBus
+     * Registering MainActivity class to the EventBus
      */
     private void subscribeToEventBus(){
         eventBus.register(new GetPhotosEventListener());
@@ -80,17 +91,11 @@ public class MainActivity extends AppCompatActivity {
      * @param message message displayed on Dialog
      */
     private void showDialog(String message) {
-
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setMessage(message)
                 .setPositiveButton("OK", (dialogInterface, i) -> {}).show();
-
     }
 
-
-    public void setListOfItem(String[] listOfItem) {
-        this.listOfItem = listOfItem;
-    }
 
     @Inject
     public void setEventBus(EventBus eventBus) {
@@ -113,16 +118,31 @@ public class MainActivity extends AppCompatActivity {
         this.jsonArrayToDb = jsonArrayToDb;
     }
 
+    @Inject
+    public void setCrudOperationManager(CRUDOperationManager<NoteDAO> crudOperationManager) {
+        this.crudOperationManager = crudOperationManager;
+    }
+
+    @Inject
+    public void setNoteDAOToStringArrayParser(NoteDAOToStringArrayParser noteDAOToStringArrayParser) {
+        this.noteDAOToStringArrayParser = noteDAOToStringArrayParser;
+    }
+
     /**
      * Class that handles arrived event through EventBus
      */
     private final class GetPhotosEventListener{
 
         @Subscribe
-        public void getStatus(GetNotesEvent event) {
-            Log.d("MESSAGE",event.getJsonArray().toString());
+        public void handleEvent(GetNotesEvent event) throws IllegalAccessException, InstantiationException {
             jsonArrayToDb.loadData(event.getJsonArray());
             jsonArrayToDb.parse();
+
+            noteDAOToStringArrayParser.loadData(crudOperationManager.readAllFromDb());
+            noteDAOToStringArrayParser.parse();
+            listOfItems = (String[]) noteDAOToStringArrayParser.getResult();
+
+            createRecyclerView();
         }
 
     }

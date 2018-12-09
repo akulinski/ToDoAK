@@ -1,10 +1,8 @@
 package com.akulinski.todoak.parsers;
 
-import com.google.gson.JsonArray;
+public interface IParser<T> {
 
-public interface IParser {
-
-    void loadData(JsonArray jsonArray);
+    void loadData(T data);
     void parse();
-
+    Object getResult();
 }

@@ -10,34 +10,40 @@ import com.akulinski.todoak.utils.DbInfo;
 
 import javax.inject.Inject;
 
-public class NotesFeedHelper extends SQLiteOpenHelper {
+public class NotesDbManager extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "notes.db";
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + DbInfo.TABLE_NAME + "(" +
-                    DbInfo.COLUMN_ID + " INTEGER PRIMARY KEY," +
-                    DbInfo.COLUMN_TITLE + " TEXT," +
-                    DbInfo.COLUMN_USER_ID + " INTEGER"+
-                    DbInfo.COLUMN_COMPLETED +"INTEGER)";
+            "CREATE TABLE " + DbInfo.TABLE_NAME.getValue() + "(" +
+                    DbInfo.COLUMN_ID.getValue() + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    DbInfo.COLUMN_TITLE.getValue() + " TEXT," +
+                    DbInfo.COLUMN_USER_ID.getValue() + " INTEGER,"+
+                    DbInfo.COLUMN_COMPLETED.getValue() +" INTEGER);";
 
     private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + DbInfo.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + DbInfo.TABLE_NAME.getValue();
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Inject
-    public NotesFeedHelper(Context context) {
+    public NotesDbManager(Context context) {
         super(context, DATABASE_NAME, null,DATABASE_VERSION);
+        onCreate(this.getWritableDatabase());
     }
 
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_DELETE_ENTRIES);
         db.execSQL(SQL_CREATE_ENTRIES);
     }
+
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
+
+    @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }

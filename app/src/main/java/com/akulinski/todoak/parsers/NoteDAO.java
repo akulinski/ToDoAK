@@ -1,6 +1,9 @@
 package com.akulinski.todoak.parsers;
 
-public class NoteDAO {
+import java.util.HashMap;
+import java.util.Objects;
+
+public class NoteDAO implements IResource{
 
     private int id;
     private int userId;
@@ -48,5 +51,23 @@ public class NoteDAO {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    @Override
+    public HashMap<String, String> generateObjectInfo() {
+        HashMap<String,String> stringHashMap = new HashMap<>();
+        stringHashMap.put("fk_user_id", String.valueOf(userId));
+        stringHashMap.put("title",title);
+        stringHashMap.put("completed", String.valueOf(completed));
+        return stringHashMap;
+    }
+
+    @Override
+    public IResource fromMap(HashMap<String, String> map) {
+        this.userId = Integer.parseInt(Objects.requireNonNull(map.get("fk_user_id")));
+        this.completed = Boolean.parseBoolean(map.get("completed"));
+        this.title = map.get("title");
+        this.id = Integer.parseInt(Objects.requireNonNull(map.get("id_note")));
+        return this;
     }
 }
