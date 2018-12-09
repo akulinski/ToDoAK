@@ -33,13 +33,26 @@
         android:background="@drawable/fliter_button_style"
         />
 
+    <ImageButton
+        android:id="@+id/add_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/add_note"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/notes_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/recycler_view_item"
-        android:layout_below="@+id/filter"/>
+        android:layout_below="@+id/filter"
+        android:layout_above="@+id/add_note"/>
 
 
 </RelativeLayout>

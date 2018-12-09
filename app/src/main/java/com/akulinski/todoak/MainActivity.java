@@ -5,12 +5,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.util.Log;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.akulinski.todoak.core.NoteAdapter;
 import com.akulinski.todoak.core.application.ToDoCore;
 import com.akulinski.todoak.core.dbmanagment.CRUDOperationManager;
+import com.akulinski.todoak.events.AddNoteEvent;
 import com.akulinski.todoak.events.ChangeStatusEvent;
 import com.akulinski.todoak.events.GetNotesEvent;
 import com.akulinski.todoak.events.RemoveNoteEvent;
@@ -52,13 +56,15 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView notesRecyclerView;
 
     @BindView(R.id.filter)
-    ImageButton imageButton;
+    ImageButton imageButtonFilter;
 
     @BindView(R.id.done)
     CheckBox successful;
-
     @BindView(R.id.not_done)
     CheckBox notSuccessful;
+
+    @BindView(R.id.add_note)
+    ImageButton addNoteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
         subscribeToEventBus();
     }
 
@@ -100,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         eventBus.register(new GetPhotosEventListener());
         eventBus.register(new ChangeStatusEventListener());
         eventBus.register(new RemoveNoteEventListener());
+        eventBus.register(new AddNoteEventListener());
     }
 
     @OnClick(R.id.done)
@@ -140,6 +146,29 @@ public class MainActivity extends AppCompatActivity {
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @OnClick(R.id.add_note)
+    void addNote() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add new Note");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+
+            String noteTitle = input.getText().toString();
+
+            NoteDAO noteDAO = new NoteDAO(1, noteTitle, false);
+
+            eventBus.post(new AddNoteEvent(noteDAO));
+
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
 
     private void showAll() {
@@ -187,8 +216,17 @@ public class MainActivity extends AppCompatActivity {
 
     private final class RemoveNoteEventListener {
         @Subscribe
-        public void hangleRemoveNoteEvent(RemoveNoteEvent removeNoteEvent) {
+        public void handleRemoveNoteEvent(RemoveNoteEvent removeNoteEvent) {
             crudOperationManager.removeNoteWithId(removeNoteEvent.getId());
+            showAccordingToTopFilter();
+        }
+    }
+
+    private final class AddNoteEventListener{
+        @Subscribe
+        public void handleAddNoteEvent(AddNoteEvent addNoteEvent){
+            Log.d("HANDLEADDNOTEEVENT",addNoteEvent.getNoteDAO().getTitle());
+            crudOperationManager.insert(addNoteEvent.getNoteDAO());
             showAccordingToTopFilter();
         }
     }

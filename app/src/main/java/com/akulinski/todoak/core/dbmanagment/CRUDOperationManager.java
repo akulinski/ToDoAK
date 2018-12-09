@@ -2,10 +2,8 @@ package com.akulinski.todoak.core.dbmanagment;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.akulinski.todoak.parsers.IResource;
-import com.akulinski.todoak.parsers.NoteDAO;
 import com.akulinski.todoak.utils.DbInfo;
 
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ public class CRUDOperationManager<T extends IResource> {
     private NotesDbManager notesDbManager;
 
     private String[] columns;
-
 
     private Class<T> type;
 

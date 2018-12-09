@@ -17,6 +17,13 @@ public class NoteDAO implements IResource{
         this.completed = completed;
     }
 
+    public NoteDAO(int userId, String title, boolean completed) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.completed = completed;
+    }
+
     public NoteDAO(){
 
     }

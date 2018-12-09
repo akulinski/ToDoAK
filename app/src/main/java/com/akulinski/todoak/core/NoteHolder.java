@@ -51,9 +51,8 @@ public final class NoteHolder extends RecyclerView.ViewHolder {
         if (noteDAO.isCompleted()) {
             this.buttonNotDone.setEnabled(true);
             this.buttonNotDone.setClickable(true);
-            this.buttonNotDone.setBackgroundColor(Color.parseColor("#3C54FE"));
             this.buttonNotDone.setTextColor(Color.WHITE);
-            this.buttonNotDone.setBackground(context.getResources().getDrawable(R.drawable.button_shape));
+            this.buttonNotDone.setBackground(context.getResources().getDrawable(R.drawable.button_shape_red));
 
 
             this.buttonDone.setEnabled(false);
@@ -64,7 +63,6 @@ public final class NoteHolder extends RecyclerView.ViewHolder {
         } else {
             this.buttonDone.setEnabled(true);
             this.buttonDone.setClickable(true);
-            this.buttonDone.setBackgroundColor(Color.parseColor("#3C54FE"));
             this.buttonDone.setBackground(context.getResources().getDrawable(R.drawable.button_shape));
             this.buttonDone.setTextColor(Color.WHITE);
 
