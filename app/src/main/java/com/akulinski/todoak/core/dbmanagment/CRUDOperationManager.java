@@ -26,20 +26,20 @@ public class CRUDOperationManager<T extends IResource> {
     private Class<T> type;
 
     @Inject
-    public CRUDOperationManager(NotesDbManager notesDbManager, @Named("columns") String[] columns,@Named("class") Class<T> tClass){
+    public CRUDOperationManager(NotesDbManager notesDbManager, @Named("columns") String[] columns, @Named("class") Class<T> tClass) {
         this.notesDbManager = notesDbManager;
         this.columns = columns;
         this.type = tClass;
     }
 
-    public void insert(IResource resource){
+    public void insert(IResource resource) {
 
         ContentValues values = new ContentValues();
 
-        HashMap<String,String> toInsert = resource.generateObjectInfo();
+        HashMap<String, String> toInsert = resource.generateObjectInfo();
 
-        for (Map.Entry<String,String> entry: toInsert.entrySet()) {
-            values.put(entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : toInsert.entrySet()) {
+            values.put(entry.getKey(), entry.getValue());
         }
 
         notesDbManager.getWritableDatabase().insert(DbInfo.TABLE_NAME.getValue(), null, values);
@@ -49,20 +49,20 @@ public class CRUDOperationManager<T extends IResource> {
 
         ArrayList<T> returnList = new ArrayList<>();
 
-        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery("SELECT * FROM "+DbInfo.TABLE_NAME.getValue()+";",null);
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery("SELECT * FROM " + DbInfo.TABLE_NAME.getValue() + ";", null);
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
-                HashMap<String,String> stringHashMap = new HashMap<>();
+                HashMap<String, String> stringHashMap = new HashMap<>();
 
-                for(int i=0;i<cursor.getColumnCount();i++){
-                    stringHashMap.put(cursor.getColumnName(i),cursor.getString(i));
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    stringHashMap.put(cursor.getColumnName(i), cursor.getString(i));
                 }
 
                 T element = type.newInstance();
                 element.fromMap(stringHashMap);
                 returnList.add(element);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
@@ -74,52 +74,61 @@ public class CRUDOperationManager<T extends IResource> {
 
         ArrayList<T> returnList = new ArrayList<>();
 
-        String query = "SELECT * FROM "+DbInfo.TABLE_NAME.getValue()+" WHERE completed=?";
+        String query = "SELECT * FROM " + DbInfo.TABLE_NAME.getValue() + " WHERE completed=?";
 
-        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query,new String[] {status});
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query, new String[]{status});
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
 
-                HashMap<String,String> stringHashMap = new HashMap<>();
-                for(int i=0;i<cursor.getColumnCount();i++){
-                    stringHashMap.put(cursor.getColumnName(i),cursor.getString(i));
+                HashMap<String, String> stringHashMap = new HashMap<>();
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    stringHashMap.put(cursor.getColumnName(i), cursor.getString(i));
                 }
                 T element = type.newInstance();
                 element.fromMap(stringHashMap);
                 returnList.add(element);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
         return returnList;
     }
 
-    public void setStatus(String status, String title){
+    public void setStatus(String status, String title) {
 
         String query = "Update note set completed = ? WHERE title=?";
 
-        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query,new String[] {status, title});
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query, new String[]{status, title});
         cursor.moveToFirst();
 
         cursor.close();
     }
 
 
-    public boolean checkIfTableIsNotEmpty(){
-        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM "+DbInfo.TABLE_NAME.getValue(),null);
+    public boolean checkIfTableIsEmpty() {
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM " + DbInfo.TABLE_NAME.getValue(), null);
 
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             int count = cursor.getInt(0);
 
-            if(count>0){
-                return true;
+            if (count > 0) {
+                return false;
             }
         }
 
         cursor.close();
-        return false;
+        return true;
+    }
+
+    public void removeNoteWithId(int id) {
+        String query = "DELETE FROM note WHERE id_note = ?";
+
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query, new String[]{String.valueOf(id)});
+        cursor.moveToFirst();
+        cursor.close();
+
     }
 
     public CRUDOperationManager(Class<T> type) {

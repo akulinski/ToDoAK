@@ -17,41 +17,38 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public final class NoteHolder extends RecyclerView.ViewHolder{
+public final class NoteHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.note_text) TextView textToShow;
-    @BindView(R.id.change_status) Button buttonDone;
-    @BindView(R.id.change_status_not_done) Button buttonNotDone;
+    @BindView(R.id.note_text)
+    TextView textToShow;
+    @BindView(R.id.change_status)
+    Button buttonDone;
+    @BindView(R.id.change_status_not_done)
+    Button buttonNotDone;
     private EventBus eventBus;
     private NoteDAO noteDAO;
     private Context context;
 
-    public NoteHolder(@NonNull View itemView, EventBus eventBus,Context context) {
+    public NoteHolder(@NonNull View itemView, EventBus eventBus, Context context) {
         super(itemView);
-        ButterKnife.bind(this,itemView);
+        ButterKnife.bind(this, itemView);
         this.eventBus = eventBus;
         this.context = context;
     }
 
-    @OnClick(R.id.change_status) void setStatusToDone(){
-        eventBus.post(new ChangeStatusEvent(textToShow.getText().toString(),"true"));
+    @OnClick(R.id.change_status)
+    void setStatusToDone() {
+        eventBus.post(new ChangeStatusEvent(textToShow.getText().toString(), "true"));
     }
 
-    @OnClick(R.id.change_status_not_done) void setStatusToNotDone(){
-        eventBus.post(new ChangeStatusEvent(textToShow.getText().toString(),"false"));
-    }
-
-    public TextView getTextToShow() {
-        return textToShow;
-    }
-
-    public void setTextToShow(TextView textToShow) {
-        this.textToShow = textToShow;
+    @OnClick(R.id.change_status_not_done)
+    void setStatusToNotDone() {
+        eventBus.post(new ChangeStatusEvent(textToShow.getText().toString(), "false"));
     }
 
     public void setNoteDAO(NoteDAO noteDAO) {
         this.noteDAO = noteDAO;
-        if(noteDAO.isCompleted()){
+        if (noteDAO.isCompleted()) {
             this.buttonNotDone.setEnabled(true);
             this.buttonNotDone.setClickable(true);
             this.buttonNotDone.setBackgroundColor(Color.parseColor("#3C54FE"));
@@ -64,7 +61,7 @@ public final class NoteHolder extends RecyclerView.ViewHolder{
             this.buttonDone.setBackgroundColor(Color.TRANSPARENT);
             this.buttonDone.setTextColor(Color.TRANSPARENT);
 
-        }else{
+        } else {
             this.buttonDone.setEnabled(true);
             this.buttonDone.setClickable(true);
             this.buttonDone.setBackgroundColor(Color.parseColor("#3C54FE"));
@@ -79,4 +76,23 @@ public final class NoteHolder extends RecyclerView.ViewHolder{
         }
     }
 
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public NoteDAO getNoteDAO() {
+        return noteDAO;
+    }
+
+    public TextView getTextToShow() {
+        return textToShow;
+    }
+
+    public void setTextToShow(TextView textToShow) {
+        this.textToShow = textToShow;
+    }
 }
