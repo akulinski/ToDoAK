@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ToDoAK</string>
+    <string name="note_image">Note image</string>
+    <string name="EditString">Edit</string>
+    <string name="test_text">test text</string>
+    <string name="successful">successful</string>
+    <string name="done">done</string>
+    <string name="not_done">not done</string>
+    <string name="finish">Finish</string>
+    <string name="set_not_done">Set not done</string>
+    <string name="undo">Undo</string>
 </resources>

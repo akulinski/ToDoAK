@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="3"
+    android:rowCount="3">
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+        <ImageView
+            android:layout_marginStart="3dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="12dp"
+            android:baselineAlignBottom="true"
+            android:contentDescription="@string/note_image"
+            android:src="@drawable/note_img"
+            android:visibility="visible" />
+
+        <EditText
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="60dp"
+            android:id="@+id/note_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:inputType="textMultiLine"
+            android:text="@string/test_text"
+            android:textSize="20sp"
+            android:autofillHints=""
+            android:background="@android:color/transparent"
+            />
+
+        <Button
+            android:id="@+id/change_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/finish"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_below="@+id/note_text"
+            android:background="@drawable/button_shape"
+            android:textColor="@color/white"
+            android:clickable="true"
+            android:focusable="true"
+
+            />
+
+
+        <Button
+            android:id="@+id/change_status_not_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/undo"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_below="@+id/note_text"
+            android:background="@drawable/button_shape"
+            android:textColor="@color/white"
+            android:clickable="false"
+            android:focusable="false"
+            />
+
+
+</RelativeLayout>
+
+
+
+
+</RelativeLayout>
