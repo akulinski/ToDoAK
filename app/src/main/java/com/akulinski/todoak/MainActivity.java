@@ -36,6 +36,7 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.add_note)
     ImageButton addNoteButton;
 
+    @BindView(R.id.search_box)
+    EditText editText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        if (!crudOperationManager.checkIfTableIsEmpty()) {
+        if (crudOperationManager.checkIfTableIsEmpty()) {
             Call<JsonArray> call = apiService.getNotes();
             call.enqueue(getPhotosCallback);
         } else {
@@ -169,6 +173,28 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
+    }
+
+    @OnTextChanged(R.id.search_box)
+    void filterByTitle(){
+        if(editText.getText().toString().equals("")){
+            showAccordingToTopFilter();
+        }
+
+        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
+        try {
+            if(successful.isChecked()){
+                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"true"));
+            }else if(notSuccessful.isChecked()){
+                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"false"));
+            }else {
+                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"none"));
+            }
+
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        notesRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private void showAll() {
