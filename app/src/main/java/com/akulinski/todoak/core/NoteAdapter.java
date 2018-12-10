@@ -15,6 +15,7 @@ import com.google.common.eventbus.EventBus;
 
 import java.util.ArrayList;
 
+
 public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
 
     private ArrayList<NoteDAO> listOfItems;
@@ -37,10 +38,6 @@ public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
     public void onBindViewHolder(@NonNull NoteHolder noteHolder, int i) {
         noteHolder.getTextToShow().setText(listOfItems.get(i).getTitle());
         noteHolder.setNoteDAO(listOfItems.get(i));
-        noteHolder.itemView.setOnLongClickListener(v -> {
-            showDialog("Are you sure you want to remove this note ?", noteHolder.getContext(), noteHolder.getNoteDAO());
-            return false;
-        });
     }
 
 
@@ -56,6 +53,8 @@ public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
                         setNegativeButton("NO", ((dialog, which) -> {
                         })).show();
     }
+
+
 
     @Override
     public int getItemCount() {

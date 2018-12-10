@@ -2,6 +2,7 @@ package com.akulinski.todoak.core.dbmanagment;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.akulinski.todoak.parsers.IResource;
 import com.akulinski.todoak.utils.DbInfo;
@@ -90,6 +91,50 @@ public class CRUDOperationManager<T extends IResource> {
 
         cursor.close();
         return returnList;
+    }
+
+    public List<T> findByTitle(String titleFragment, String status) throws InstantiationException, IllegalAccessException {
+
+        ArrayList<T> returnList = new ArrayList<>();
+
+        String query = "SELECT * FROM " + DbInfo.TABLE_NAME.getValue() + " WHERE title Like ?";
+        String[] values;
+        if (!status.equals("none")) {
+            query += " AND completed = ?";
+            values = new String[]{"%" + titleFragment + "%", status};
+        } else {
+            values = new String[]{"%" + titleFragment + "%"};
+        }
+
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query, values);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                HashMap<String, String> stringHashMap = new HashMap<>();
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    stringHashMap.put(cursor.getColumnName(i), cursor.getString(i));
+                }
+                T element = type.newInstance();
+                element.fromMap(stringHashMap);
+                returnList.add(element);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return returnList;
+    }
+
+    public void updateTitle(int id,String newTitle){
+
+        String query = "UPDATE "+DbInfo.TABLE_NAME.getValue()+" SET title = ? WHERE "+DbInfo.COLUMN_ID.getValue()+" = ?";
+        String[] values = new String[]{newTitle, String.valueOf(id)};
+
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query, values);
+
+        cursor.moveToFirst();
+
+        cursor.close();
     }
 
     public void setStatus(String status, String title) {
