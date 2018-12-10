@@ -125,6 +125,40 @@ public class CRUDOperationManager<T extends IResource> {
         return returnList;
     }
 
+
+    public List<T> findById(String id, String status) throws InstantiationException, IllegalAccessException {
+
+        ArrayList<T> returnList = new ArrayList<>();
+
+        String query = "SELECT * FROM " + DbInfo.TABLE_NAME.getValue() + " WHERE "+DbInfo.COLUMN_USER_ID.getValue()+" = ?";
+        String[] values;
+
+        if (!status.equals("none")) {
+            query += " AND completed = ?";
+            values = new String[]{id, status};
+        } else {
+            values = new String[]{id};
+        }
+
+        Cursor cursor = notesDbManager.getReadableDatabase().rawQuery(query, values);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                HashMap<String, String> stringHashMap = new HashMap<>();
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    stringHashMap.put(cursor.getColumnName(i), cursor.getString(i));
+                }
+                T element = type.newInstance();
+                element.fromMap(stringHashMap);
+                returnList.add(element);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return returnList;
+    }
+
     public void updateTitle(int id,String newTitle){
 
         String query = "UPDATE "+DbInfo.TABLE_NAME.getValue()+" SET title = ? WHERE "+DbInfo.COLUMN_ID.getValue()+" = ?";

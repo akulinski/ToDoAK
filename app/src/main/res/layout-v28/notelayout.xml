@@ -36,6 +36,16 @@
             android:background="@null"
             />
 
+        <TextView
+            android:id="@+id/note_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/test_text"
+            android:textSize="14sp"
+            android:layout_marginEnd="5dp" />
+
         <Button
             android:id="@+id/change_status"
             android:layout_width="wrap_content"
