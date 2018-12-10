@@ -1,15 +1,16 @@
 package com.akulinski.todoak;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.akulinski.todoak.core.NoteAdapter;
 import com.akulinski.todoak.core.application.ToDoCore;
@@ -18,6 +19,7 @@ import com.akulinski.todoak.events.AddNoteEvent;
 import com.akulinski.todoak.events.ChangeStatusEvent;
 import com.akulinski.todoak.events.GetNotesEvent;
 import com.akulinski.todoak.events.RemoveNoteEvent;
+import com.akulinski.todoak.events.SaveNoteEvent;
 import com.akulinski.todoak.parsers.JsonArrayToDb;
 import com.akulinski.todoak.parsers.NoteDAO;
 import com.akulinski.todoak.parsers.NoteDAOToStringArrayParser;
@@ -52,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private CRUDOperationManager<NoteDAO> crudOperationManager;
 
     private NoteDAOToStringArrayParser noteDAOToStringArrayParser;
+
+    private final static String NOTE_SAVED = "NOTE_SAVED";
+    private final static String NOTE_ADDED = "NOTE_ADDED";
 
     @BindView(R.id.notes_list)
     RecyclerView notesRecyclerView;
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         eventBus.register(new ChangeStatusEventListener());
         eventBus.register(new RemoveNoteEventListener());
         eventBus.register(new AddNoteEventListener());
+        eventBus.register(new SaveNoteEventListener());
     }
 
     @OnClick(R.id.done)
@@ -117,10 +123,19 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             if (successful.isChecked()) {
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.readAllWithStatus("true"));
-                notesRecyclerView.getAdapter().notifyDataSetChanged();
-                notSuccessful.setChecked(false);
+
+                if(!editText.getText().toString().equals("")){
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"true"));
+                    notesRecyclerView.getAdapter().notifyDataSetChanged();
+                    notSuccessful.setChecked(false);
+                }else {
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.readAllWithStatus("true"));
+                    notesRecyclerView.getAdapter().notifyDataSetChanged();
+                    notSuccessful.setChecked(false);
+                }
+
             } else {
                 ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
                 ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.readAllFromDb());
@@ -138,10 +153,18 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             if (notSuccessful.isChecked()) {
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.readAllWithStatus("false"));
-                notesRecyclerView.getAdapter().notifyDataSetChanged();
-                successful.setChecked(false);
+
+                if(!editText.getText().toString().equals("")) {
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"false"));
+                    notesRecyclerView.getAdapter().notifyDataSetChanged();
+                    notSuccessful.setChecked(false);
+                }else{
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
+                    ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.readAllWithStatus("false"));
+                    notesRecyclerView.getAdapter().notifyDataSetChanged();
+                    successful.setChecked(false);
+                }
             } else {
                 ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
                 ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.readAllFromDb());
@@ -176,19 +199,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnTextChanged(R.id.search_box)
-    void filterByTitle(){
-        if(editText.getText().toString().equals("")){
+    void filterByTitle() {
+        if (editText.getText().toString().equals("")) {
             showAccordingToTopFilter();
         }
 
         ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
         try {
-            if(successful.isChecked()){
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"true"));
-            }else if(notSuccessful.isChecked()){
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"false"));
-            }else {
-                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(),"none"));
+            if (successful.isChecked()) {
+                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(), "true"));
+            } else if (notSuccessful.isChecked()) {
+                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(), "false"));
+            } else {
+                ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(), "none"));
             }
 
         } catch (InstantiationException | IllegalAccessException e) {
@@ -248,13 +271,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private final class AddNoteEventListener{
+    private final class AddNoteEventListener {
         @Subscribe
-        public void handleAddNoteEvent(AddNoteEvent addNoteEvent){
-            Log.d("HANDLEADDNOTEEVENT",addNoteEvent.getNoteDAO().getTitle());
+        public void handleAddNoteEvent(AddNoteEvent addNoteEvent) {
             crudOperationManager.insert(addNoteEvent.getNoteDAO());
             showAccordingToTopFilter();
+            showToast(NOTE_ADDED);
         }
+    }
+
+    private final class SaveNoteEventListener {
+        @Subscribe
+        public void handleSaveNoteEvent(SaveNoteEvent saveNoteEvent) {
+            crudOperationManager.updateTitle(saveNoteEvent.getNoteId(), saveNoteEvent.getTitle());
+            showToast(NOTE_SAVED);
+
+        }
+    }
+
+    public void showToast(String type) {
+
+        String textValue = "";
+
+        if (type.equals(NOTE_ADDED))
+            textValue = getResources().getString(R.string.note_added);
+        else if (type.equals(NOTE_SAVED))
+            textValue = getResources().getString(R.string.note_saved);
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, textValue, duration);
+
+        toast.show();
+
     }
 
     @Inject

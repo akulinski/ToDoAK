@@ -9,4 +9,7 @@
     <string name="finish">Finish</string>
     <string name="set_not_done">Set not done</string>
     <string name="undo">Undo</string>
+    <string name="save">save</string>
+    <string name="note_saved">Note has been saved</string>
+    <string name="note_added">Note has been added</string>
 </resources>
