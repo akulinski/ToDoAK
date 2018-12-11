@@ -1,0 +1,11 @@
+com.akulinski.todoak
+com.akulinski.todoak.core
+com.akulinski.todoak.core.application
+com.akulinski.todoak.core.components
+com.akulinski.todoak.core.dbmanagment
+com.akulinski.todoak.core.modules
+com.akulinski.todoak.events
+com.akulinski.todoak.parsers
+com.akulinski.todoak.retorift
+com.akulinski.todoak.retorift.callbacks
+com.akulinski.todoak.utils
