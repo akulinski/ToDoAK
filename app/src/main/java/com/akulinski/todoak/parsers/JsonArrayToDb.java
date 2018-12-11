@@ -7,6 +7,9 @@ import com.google.gson.JsonArray;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+/**
+ * takes data from JsonArray and inserts to database
+ */
 public class JsonArrayToDb implements IParser {
 
     private JsonArray toParse;
@@ -14,7 +17,7 @@ public class JsonArrayToDb implements IParser {
     private CRUDOperationManager crudOperationManager;
 
     @Inject
-    public JsonArrayToDb(@Named("basicGson") Gson gson, CRUDOperationManager crudOperationManager){
+    public JsonArrayToDb(@Named("basicGson") Gson gson, CRUDOperationManager crudOperationManager) {
         this.gson = gson;
         this.crudOperationManager = crudOperationManager;
     }
@@ -25,11 +28,14 @@ public class JsonArrayToDb implements IParser {
         this.toParse = (JsonArray) data;
     }
 
+    /**
+     * Inserts JSON elements from JSONArray to database
+     */
     @Override
     public void parse() {
 
         toParse.forEach(jsonElement -> {
-            NoteDAO noteDAO = gson.fromJson(jsonElement,NoteDAO.class);
+            NoteDAO noteDAO = gson.fromJson(jsonElement, NoteDAO.class);
             crudOperationManager.insert(noteDAO);
         });
 

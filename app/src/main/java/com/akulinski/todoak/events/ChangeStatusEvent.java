@@ -10,7 +10,7 @@ public class ChangeStatusEvent {
         this.newStatus = newStatus;
     }
 
-    public ChangeStatusEvent(){
+    public ChangeStatusEvent() {
 
     }
 

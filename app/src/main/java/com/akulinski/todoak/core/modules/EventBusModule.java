@@ -8,14 +8,14 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Module that provides event bus and in future other related objects
+ * Module that provides event bus
  */
 @Module
 public final class EventBusModule {
 
     @Provides
     @Singleton
-    public EventBus provideEventBus(){
+    public EventBus provideEventBus() {
         return new EventBus();
     }
 }

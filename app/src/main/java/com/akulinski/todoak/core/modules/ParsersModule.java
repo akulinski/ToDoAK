@@ -13,19 +13,22 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
+/**
+ * Provides parsers
+ */
 @Module
 public class ParsersModule {
 
     @Provides
     @Singleton
-    public NoteDAOToStringArrayParser provideNoteDaoToStringArrayParser(){
+    public NoteDAOToStringArrayParser provideNoteDaoToStringArrayParser() {
         return new NoteDAOToStringArrayParser();
     }
 
     @Provides
     @Singleton
     @Named("JsonArrayToDb")
-    public IParser<JsonArray> provideJsonArrayToDbParser(@Named("basicGson") Gson gson, CRUDOperationManager crudOperationManager){
-        return new JsonArrayToDb(gson,crudOperationManager);
+    public IParser<JsonArray> provideJsonArrayToDbParser(@Named("basicGson") Gson gson, CRUDOperationManager crudOperationManager) {
+        return new JsonArrayToDb(gson, crudOperationManager);
     }
 }

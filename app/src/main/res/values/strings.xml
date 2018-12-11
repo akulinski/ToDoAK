@@ -12,4 +12,12 @@
     <string name="save">save</string>
     <string name="note_saved">Note has been saved</string>
     <string name="note_added">Note has been added</string>
+    <string name="key1">key1</string>
+    <string name="TOP_FILTER">TOP_FILTER</string>
+    <string name="SUCCESSFUL">SUCCESSFUL</string>
+    <string name="UNSUCCESSFUL">UNSUCCESSFUL</string>
+    <string name="FILTER_TEXT">FILTER_TEXT</string>
+    <string name="SPINNER">SPINNER</string>
+    <string name="RECYCLER_VIEW_LIST_STATE">recyclerView</string>
+    <string name="NO_FILTER">NO_FILTER</string>
 </resources>

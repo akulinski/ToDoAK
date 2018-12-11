@@ -3,7 +3,7 @@ package com.akulinski.todoak.parsers;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class NoteDAO implements IResource{
+public class NoteDAO implements IResource {
 
     private int id;
     private int userId;
@@ -24,7 +24,7 @@ public class NoteDAO implements IResource{
         this.completed = completed;
     }
 
-    public NoteDAO(){
+    public NoteDAO() {
 
     }
 
@@ -62,9 +62,9 @@ public class NoteDAO implements IResource{
 
     @Override
     public HashMap<String, String> generateObjectInfo() {
-        HashMap<String,String> stringHashMap = new HashMap<>();
+        HashMap<String, String> stringHashMap = new HashMap<>();
         stringHashMap.put("fk_user_id", String.valueOf(userId));
-        stringHashMap.put("title",title);
+        stringHashMap.put("title", title);
         stringHashMap.put("completed", String.valueOf(completed));
         return stringHashMap;
     }

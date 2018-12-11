@@ -10,24 +10,34 @@ import com.akulinski.todoak.utils.DbInfo;
 
 import javax.inject.Inject;
 
+/**
+ * Class that allows to create database, create tables (drop)
+ */
 public class NotesDbManager extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
+
     private static final String DATABASE_NAME = "notes.db";
+
+    /**
+     * Schema creation
+     */
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + DbInfo.TABLE_NAME.getValue() + "(" +
                     DbInfo.COLUMN_ID.getValue() + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     DbInfo.COLUMN_TITLE.getValue() + " TEXT," +
-                    DbInfo.COLUMN_USER_ID.getValue() + " INTEGER,"+
-                    DbInfo.COLUMN_COMPLETED.getValue() +" INTEGER);";
-
+                    DbInfo.COLUMN_USER_ID.getValue() + " INTEGER," +
+                    DbInfo.COLUMN_COMPLETED.getValue() + " INTEGER);";
+    /**
+     * Table drop
+     */
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + DbInfo.TABLE_NAME.getValue();
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Inject
     public NotesDbManager(Context context) {
-        super(context, DATABASE_NAME, null,DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override

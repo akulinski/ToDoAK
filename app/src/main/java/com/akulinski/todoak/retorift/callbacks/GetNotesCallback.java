@@ -10,22 +10,25 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Callback class that gets data from server and posts event to EventBus
+ */
 public final class GetNotesCallback implements Callback<JsonArray> {
 
     private EventBus eventBus;
 
     @Inject
-    public GetNotesCallback(EventBus eventBus){
+    public GetNotesCallback(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
     @Override
     public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
 
-        if (response.isSuccessful()){
-            eventBus.post(new GetNotesEvent(true,response.body()));
-        }else {
-            eventBus.post(new GetNotesEvent(false,response.body()));
+        if (response.isSuccessful()) {
+            eventBus.post(new GetNotesEvent(true, response.body()));
+        } else {
+            eventBus.post(new GetNotesEvent(false, response.body()));
         }
     }
 

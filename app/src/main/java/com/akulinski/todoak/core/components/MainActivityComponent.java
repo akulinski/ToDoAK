@@ -13,10 +13,10 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 /**
- * Injects to LoginActivity
+ * Interface that injects dependencies to MainActivity
  */
 @Singleton
-@Component(modules = {EventBusModule.class, RetrofitModule.class,ContextModule.class,DbModule.class,GsonModule.class,ParsersModule.class})
+@Component(modules = {EventBusModule.class, RetrofitModule.class, ContextModule.class, DbModule.class, GsonModule.class, ParsersModule.class})
 public interface MainActivityComponent {
     void inject(MainActivity activity);
 }

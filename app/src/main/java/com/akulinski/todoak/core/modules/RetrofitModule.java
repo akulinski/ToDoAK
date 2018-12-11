@@ -13,43 +13,39 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Module that provides retrofit obj. and
- * related objects.
+ * Module that provides retrofit object
  */
 
 @Module
 public final class RetrofitModule {
 
     /**
-     *
      * @return base url of server
      */
     @Provides
     @Singleton
     @Named("baseUrl")
-    public String provideBaseUrl(){
+    public String provideBaseUrl() {
         return Urls.SERVER.url;
     }
 
     /**
-     *
      * @param baseUrl provided by provideBaseUrl
      * @return instance of api client with base URL
      */
     @Provides
     @Singleton
-    public ApiInterface provideApiInterface(@Named("baseUrl") String baseUrl){
+    public ApiInterface provideApiInterface(@Named("baseUrl") String baseUrl) {
         return new ApiClient(baseUrl).getClient().create(ApiInterface.class);
     }
 
     /**
-     *
      * @param eventBus provided by event bus module
      * @return callback for login screen
      */
     @Provides
     @Singleton
-    public GetNotesCallback provideGetNotesCallback(EventBus eventBus){
+    public GetNotesCallback provideGetNotesCallback(EventBus eventBus) {
         return new GetNotesCallback(eventBus);
     }
 
