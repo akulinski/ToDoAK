@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/darkerWhite"
     >
 
     <CheckBox
@@ -73,7 +73,7 @@
         android:id="@+id/notes_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/recycler_view_item"
+        tools:listitem="@layout/notelayout"
         android:layout_below="@+id/filter"
         android:layout_above="@+id/add_note"/>
 

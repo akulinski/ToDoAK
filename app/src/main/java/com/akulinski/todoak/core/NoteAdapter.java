@@ -12,7 +12,6 @@ import com.google.common.eventbus.EventBus;
 
 import java.util.ArrayList;
 
-
 public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
 
     private ArrayList<NoteDAO> listOfItems;
@@ -36,10 +35,23 @@ public final class NoteAdapter extends RecyclerView.Adapter<NoteHolder> {
     public void onBindViewHolder(@NonNull NoteHolder noteHolder, int i) {
         noteHolder.getTextToShow().setText(listOfItems.get(i).getTitle());
         noteHolder.setNoteDAO(listOfItems.get(i));
-        noteHolder.getViewCounter().setText(String.valueOf(i+1));
+
+        //allows to number notes
+        noteHolder.getViewCounter().setText(String.valueOf(i + 1));
     }
 
 
+    @Override
+    public void onViewDetachedFromWindow(@NonNull NoteHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+
+        //when user edits note and decides to filter, note shouldn't be editable
+        if (holder.getStatus().equals(NoteHolder.getEditingText())) {
+            holder.toggleSaveButton();
+            holder.setStatus(NoteHolder.getShowingText());
+            holder.changePropertiesOfEditText(false);
+        }
+    }
 
     @Override
     public int getItemCount() {

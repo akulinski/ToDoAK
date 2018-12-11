@@ -11,6 +11,9 @@ import com.akulinski.todoak.core.modules.GsonModule;
 import com.akulinski.todoak.core.modules.ParsersModule;
 import com.akulinski.todoak.core.modules.RetrofitModule;
 
+/**
+ * Main activity that allows DI to mainActivity
+ */
 public class ToDoCore extends Application {
 
     private MainActivityComponent mainActivityComponent;
@@ -25,10 +28,5 @@ public class ToDoCore extends Application {
     public MainActivityComponent getMainActivityComponent() {
         return mainActivityComponent;
     }
-
-    public void setMainComponent(MainActivityComponent mainActivityComponent) {
-        this.mainActivityComponent = mainActivityComponent;
-    }
-
 
 }

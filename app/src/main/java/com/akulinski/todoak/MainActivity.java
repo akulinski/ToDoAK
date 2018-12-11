@@ -61,9 +61,19 @@ public class MainActivity extends AppCompatActivity {
 
     private NoteDAOToStringArrayParser noteDAOToStringArrayParser;
 
+    /**
+     * Spinner status
+     */
     private final static String STATUS_TITLE = "Title";
+
+    /**
+     * Spinner status
+     */
     private final static String STATUS_USER_ID = "User ID";
 
+    /**
+     * Current spinner status
+     */
     private String SPINNER_STATUS;
 
     private boolean isInitialized; //OnTextChanged gets called on application startup and references null list
@@ -75,11 +85,15 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.notes_list)
     RecyclerView notesRecyclerView;
 
-    @BindView(R.id.filter)
-    ImageButton imageButtonFilter;
-
+    /**
+     * Show successful top filter
+     */
     @BindView(R.id.done)
     CheckBox successful;
+
+    /**
+     * Show not successful top filter
+     */
     @BindView(R.id.not_done)
     CheckBox notSuccessful;
 
@@ -87,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton addNoteButton;
 
     @BindView(R.id.search_box)
-    EditText editText;
+    EditText bottomFilter;
 
     @BindView(R.id.userid_title_spinner)
     Spinner spinner;
@@ -103,29 +117,76 @@ public class MainActivity extends AppCompatActivity {
         initSpinner();
 
         checkIfDbIsEmptyElseCallAPI();
+
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    protected void onResume() {
+        super.onResume();
 
         Context context = getApplicationContext();
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                getString(R.string.key1), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+        SharedPreferences sharedPref = context.getSharedPreferences("sharedPrefs", 0);
 
-        if(successful.isChecked()){
-            editor.putString(getString(R.string.TOP_FILTER),getString(R.string.SUCCESSFUL));
-        }else{
-            editor.putString(getString(R.string.TOP_FILTER),getString(R.string.UNSUCCESSFUL));
+        String topFilter = context.getResources().getString(R.string.TOP_FILTER);
+
+        String checked = sharedPref.getString(topFilter, null);
+
+        if (checked != null) {
+            if (checked.equals(String.valueOf(R.string.SUCCESSFUL))) {
+                successful.setChecked(true);
+                notSuccessful.setChecked(false);
+            } else if (checked.equals(String.valueOf(R.string.UNSUCCESSFUL))) {
+                successful.setChecked(false);
+                notSuccessful.setChecked(true);
+            } else {
+                successful.setChecked(false);
+                notSuccessful.setChecked(false);
+            }
         }
 
-        editor.putString(getString(R.string.SPINNER),this.SPINNER_STATUS);
+        String spinnerString = context.getResources().getString(R.string.SPINNER);
 
-        editor.putString(getString(R.string.FILTER_TEXT),this.editText.getText().toString());
+        String spinnerStatus = sharedPref.getString(spinnerString, null);
+
+        if (spinnerStatus != null) {
+            if (spinnerStatus.equals(STATUS_TITLE)) {
+                this.spinner.setSelection(0);
+            } else if (spinnerStatus.equals(STATUS_USER_ID)) {
+                this.spinner.setSelection(1);
+            }
+        }
+
+        String filterString = context.getResources().getString(R.string.FILTER_TEXT);
+
+        String filterText = sharedPref.getString(filterString, null);
+
+        if (filterText != null) {
+            this.bottomFilter.setText(filterText);
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Context context = getApplicationContext();
+        SharedPreferences sharedPref = context.getSharedPreferences("sharedPrefs", 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        if (successful.isChecked()) {
+            editor.putString(getString(R.string.TOP_FILTER), String.valueOf(R.string.SUCCESSFUL));
+        } else if (notSuccessful.isChecked()) {
+            editor.putString(getString(R.string.TOP_FILTER), String.valueOf(R.string.UNSUCCESSFUL));
+        } else {
+            editor.putString(getString(R.string.TOP_FILTER), getString(R.string.NO_FILTER));
+        }
+
+        editor.putString(getString(R.string.SPINNER), this.SPINNER_STATUS);
+
+        editor.putString(getString(R.string.FILTER_TEXT), this.bottomFilter.getText().toString());
 
         editor.commit();
-
     }
 
     private void createRecyclerView(List<NoteDAO> listOfItems) {
@@ -145,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         this.SPINNER_STATUS = STATUS_TITLE;
     }
 
-    public void checkIfDbIsEmptyElseCallAPI(){
+    public void checkIfDbIsEmptyElseCallAPI() {
 
         if (crudOperationManager.checkIfTableIsEmpty()) {
             isInitialized = false;
@@ -161,22 +222,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Registering MainActivity class to the EventBus
-     */
+
     private void subscribeToEventBus() {
 
-        eventBus.register(new GetPhotosEventListener());
+        eventBus.register(new GetNotesEventListener());
         eventBus.register(new ChangeStatusEventListener());
         eventBus.register(new RemoveNoteEventListener());
         eventBus.register(new AddNoteEventListener());
         eventBus.register(new SaveNoteEventListener());
     }
 
+    /**
+     * When uses clicks top filter shows notes with corresponding status but
+     * Checks Whether user as entered something in bottom filter previously
+     */
     @OnClick(R.id.done)
     void showSuccessful() {
 
-        if (!this.editText.getText().toString().equals("")) {
+        if (!this.bottomFilter.getText().toString().equals("")) {
             notSuccessful.setChecked(false);
             filterByTitleOrUserId();
             return;
@@ -199,9 +262,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * When uses clicks top filter shows notes with corresponding status but
+     * Checks Whether user as entered something in bottom filter previously
+     */
     @OnClick(R.id.not_done)
     void showNotDone() {
-        if (!this.editText.getText().toString().equals("")) {
+        if (!this.bottomFilter.getText().toString().equals("")) {
             successful.setChecked(false);
             filterByTitleOrUserId();
             return;
@@ -246,33 +313,39 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Filters user text using bottom and top filter, but if edit text is empty shows data according to top filter
+     */
     @OnTextChanged(R.id.search_box)
     void filterByTitleOrUserId() {
-        if(isInitialized) {
-            if (editText.getText().toString().equals("")) {
+        if (isInitialized) {
+            if (bottomFilter.getText().toString().equals("")) {
                 showAccordingToTopFilter();
                 return;
             }
 
             ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().clear();
             try {
+                //Filtering by title
                 if (this.SPINNER_STATUS.equals(STATUS_TITLE)) {
-
+                    //checks whether top filter is checked
                     if (successful.isChecked()) {
-                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(), "true"));
-                    } else if (notSuccessful.isChecked()) {
-                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(), "false"));
-                    } else {
-                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(editText.getText().toString(), "none"));
+                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(bottomFilter.getText().toString(), "true"));
+                    } else if (notSuccessful.isChecked()) {//checks whether top filter is checked
+                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(bottomFilter.getText().toString(), "false"));
+                    } else {//is top filter is not checked then show all notes with corresponding title
+                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findByTitle(bottomFilter.getText().toString(), "none"));
                     }
-                } else if (this.SPINNER_STATUS.equals(STATUS_USER_ID)) {
 
+                    //Filtering by user id
+                } else if (this.SPINNER_STATUS.equals(STATUS_USER_ID)) {
+                    //checks whether top filter is checked
                     if (successful.isChecked()) {
-                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findById(editText.getText().toString(), "true"));
-                    } else if (notSuccessful.isChecked()) {
-                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findById(editText.getText().toString(), "false"));
-                    } else {
-                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findById(editText.getText().toString(), "none"));
+                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findById(bottomFilter.getText().toString(), "true"));
+                    } else if (notSuccessful.isChecked()) { //checks whether top filter is checked
+                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findById(bottomFilter.getText().toString(), "false"));
+                    } else {//is top filter is not checked then show all notes with corresponding user id
+                        ((NoteAdapter) notesRecyclerView.getAdapter()).getListOfItems().addAll(crudOperationManager.findById(bottomFilter.getText().toString(), "none"));
                     }
                 }
             } catch (IllegalAccessException | InstantiationException e) {
@@ -307,17 +380,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Changes status of bottom filter, also reloads data when status is changed
+     *
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @OnItemSelected(R.id.userid_title_spinner)
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         this.SPINNER_STATUS = (String) parent.getItemAtPosition(position);
         filterByTitleOrUserId();
     }
 
-
     /**
-     * Class that handles arrived event through EventBus
+     * Class that calls parser and inserts data do database using parser
      */
-    private final class GetPhotosEventListener {
+    private final class GetNotesEventListener {
         @Subscribe
         public void handleAddNotesEvent(GetNotesEvent event) throws IllegalAccessException, InstantiationException {
             jsonArrayToDb.loadData(event.getJsonArray());
@@ -326,6 +406,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Listens for changing status of notes
+     */
     private final class ChangeStatusEventListener {
         @Subscribe
         public void handleChangeStatusEvent(ChangeStatusEvent changeStatusEvent) {
@@ -335,6 +418,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Listens for removing of notes
+     */
     private final class RemoveNoteEventListener {
         @Subscribe
         public void handleRemoveNoteEvent(RemoveNoteEvent removeNoteEvent) {
@@ -343,6 +429,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Adds notes
+     */
     private final class AddNoteEventListener {
         @Subscribe
         public void handleAddNoteEvent(AddNoteEvent addNoteEvent) {
@@ -352,6 +441,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves edited title
+     */
     private final class SaveNoteEventListener {
         @Subscribe
         public void handleSaveNoteEvent(SaveNoteEvent saveNoteEvent) {
@@ -377,7 +469,6 @@ public class MainActivity extends AppCompatActivity {
 
         toast.show();
     }
-
 
 
     @Inject

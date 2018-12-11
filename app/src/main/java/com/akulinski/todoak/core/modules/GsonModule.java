@@ -9,19 +9,23 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
+/**
+ * Provides basic gson object
+ */
+
 @Module
 public class GsonModule {
 
     @Provides
     @Singleton
-    public GsonBuilder provideBuilder(){
+    public GsonBuilder provideBuilder() {
         return new GsonBuilder();
     }
 
     @Provides
     @Singleton
     @Named("basicGson")
-    public Gson provideBasicGson(GsonBuilder gsonBuilder){
+    public Gson provideBasicGson(GsonBuilder gsonBuilder) {
         return gsonBuilder.create();
     }
 }

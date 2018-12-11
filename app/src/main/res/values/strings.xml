@@ -18,4 +18,6 @@
     <string name="UNSUCCESSFUL">UNSUCCESSFUL</string>
     <string name="FILTER_TEXT">FILTER_TEXT</string>
     <string name="SPINNER">SPINNER</string>
+    <string name="RECYCLER_VIEW_LIST_STATE">recyclerView</string>
+    <string name="NO_FILTER">NO_FILTER</string>
 </resources>

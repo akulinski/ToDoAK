@@ -7,7 +7,7 @@ public final class NoteDAOToStringArrayParser implements IParser {
     private ArrayList<NoteDAO> noteDAOArrayList;
 
 
-    public NoteDAOToStringArrayParser(){
+    public NoteDAOToStringArrayParser() {
         this.noteDAOArrayList = new ArrayList<>();
     }
 

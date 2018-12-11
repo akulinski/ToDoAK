@@ -16,6 +16,10 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
+/**
+ * Provides database related dependencies
+ */
+
 @Module
 public class DbModule {
 
@@ -24,42 +28,42 @@ public class DbModule {
     @Provides
     @Singleton
     @Named("columns")
-    public String[] provideColumns(){
-        return new String[]{DbInfo.COLUMN_ID.getValue(),DbInfo.COLUMN_TITLE.getValue(),DbInfo.COLUMN_USER_ID.getValue(),DbInfo.COLUMN_COMPLETED.getValue()};
+    public String[] provideColumns() {
+        return new String[]{DbInfo.COLUMN_ID.getValue(), DbInfo.COLUMN_TITLE.getValue(), DbInfo.COLUMN_USER_ID.getValue(), DbInfo.COLUMN_COMPLETED.getValue()};
     }
 
     @Provides
     @Singleton
     @Named("table")
-    public String provideTable(){
+    public String provideTable() {
         return TABLE_NAME;
     }
 
     @Provides
     @Singleton
     @Named("class")
-    public Class<NoteDAO> provideClass(){
+    public Class<NoteDAO> provideClass() {
         return NoteDAO.class;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Provides
     @Singleton
-    public NotesDbManager provideNotesDbManager(Context context){
+    public NotesDbManager provideNotesDbManager(Context context) {
         return new NotesDbManager(context);
     }
 
     @Provides
     @Singleton
     public CRUDOperationManager crudOperationManager(NotesDbManager notesDbManager, @Named("columns") String[] columns,
-                                                     @Named("class") Class<NoteDAO> noteDAOClass){
-        return new CRUDOperationManager(notesDbManager,columns,noteDAOClass);
+                                                     @Named("class") Class<NoteDAO> noteDAOClass) {
+        return new CRUDOperationManager(notesDbManager, noteDAOClass);
     }
 
     @Provides
     @Singleton
     @Named("writable")
-    public SQLiteDatabase provideWritableSQLiteDatabase(NotesDbManager notesDbManager){
+    public SQLiteDatabase provideWritableSQLiteDatabase(NotesDbManager notesDbManager) {
         return notesDbManager.getWritableDatabase();
     }
 }
