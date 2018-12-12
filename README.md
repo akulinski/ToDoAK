@@ -20,6 +20,20 @@ Projects requires api 28
 
 ```
 
+### HOW TO USE
+
+```
+
+To filter notes by status click on top checkbox. Filtering by all statuses is possible when you turn off both checkboxes on top  panel.
+
+To filter by title/userid click spinner on bottom left corner and choose option of filtering, then enter part of title/useid in bottom panel.
+
+To add new note click icon in bottom right corner.
+
+To edit/delete click and hold on selected note.
+
+```
+
 ## Authors
 
 * **Albert Kuliński** 
